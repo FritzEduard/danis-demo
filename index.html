@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Danis — Pâtisserie</title>
+  <meta name="description" content="Pâtisserie artisanale au Sénégal. Commandez en ligne ou en jouant.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top">
+    <a class="logo" href="#" id="logo">Danis<span>🧁</span></a>
+    <div class="faces" role="tablist">
+      <button role="tab" id="tab-shop" class="face on" data-face="shop" data-i18n="face_shop">Boutique</button>
+      <button role="tab" id="tab-game" class="face" data-face="game" data-i18n="face_game">Jeu 🎮</button>
+    </div>
+    <div class="top-actions">
+      <button class="lang" id="lang" type="button" aria-label="Language">EN</button>
+      <button class="cart-btn" id="open-cart" type="button" aria-label="Panier">🛒<b id="cart-count">0</b></button>
+    </div>
+  </header>
+
+  <!-- ===================== FACE 1: SHOP ===================== -->
+  <main id="shop" class="face-panel">
+    <section class="hero">
+      <div class="hero-inner">
+        <p class="eyebrow" data-i18n="hero_eyebrow">Pâtisserie artisanale · Sénégal</p>
+        <h1 data-i18n="hero_title">Des douceurs faites maison, pour toutes vos occasions.</h1>
+        <p class="lead" data-i18n="hero_lead">Viennoiseries, gâteaux et tartes préparés chaque jour. Commandez en ligne, ou prenez les commandes en main avec notre mini-jeu.</p>
+        <div class="hero-cta">
+          <a class="btn" href="#catalog" data-i18n="cta_order">Commander</a>
+          <button class="btn btn-ghost" type="button" data-go-game data-i18n="cta_play">Commander en jouant 🎮</button>
+        </div>
+      </div>
+      <div class="hero-art" aria-hidden="true">🥐 🍰 🧁</div>
+    </section>
+
+    <section id="catalog" class="section">
+      <h2 data-i18n="cat_title">Notre catalogue</h2>
+      <p class="sub" data-i18n="cat_sub">Prix en FCFA. Photos et prix à remplacer par les vôtres.</p>
+      <div class="grid" id="grid"></div>
+    </section>
+
+    <section id="cook" class="section cook">
+      <div class="cook-photo" aria-hidden="true">👩‍🍳<small data-i18n="ph_photo">Photo à venir</small></div>
+      <div class="cook-text">
+        <h2 data-i18n="cook_title">La pâtissière</h2>
+        <p class="sub" data-i18n="cook_sub">Textes à remplacer par le vrai parcours.</p>
+        <p data-i18n="cook_story">Passionnée de pâtisserie depuis l'enfance, Dani prépare chaque recette avec des ingrédients choisis avec soin et un savoir-faire transmis en famille.</p>
+        <ul class="creds">
+          <li><b data-i18n="cred_train_t">Formation</b><span data-i18n="cred_train_d">Diplôme de pâtisserie (établissement et année à indiquer)</span></li>
+          <li><b data-i18n="cred_exp_t">Expérience</b><span data-i18n="cred_exp_d">X années en boulangerie-pâtisserie, hôtels et événements</span></li>
+          <li><b data-i18n="cred_cert_t">Certifications</b><span data-i18n="cred_cert_d">Hygiène et sécurité alimentaire (à confirmer)</span></li>
+          <li><b data-i18n="cred_spec_t">Spécialités</b><span data-i18n="cred_spec_d">Gâteaux d'anniversaire, mariages, viennoiseries</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="contact" class="section">
+      <h2 data-i18n="ct_title">Contact et horaires</h2>
+      <ul class="contact">
+        <li>📍 <span data-i18n="ct_addr">Adresse de la pâtisserie, Dakar, Sénégal</span></li>
+        <li>🕗 <span data-i18n="ct_hours">Lundi–samedi 8h–19h, dimanche 8h–13h</span></li>
+        <li>📞 <a href="tel:+221770000000">+221 77 000 00 00</a></li>
+        <li>💬 <a href="https://wa.me/221770000000">WhatsApp</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <!-- ===================== FACE 2: GAME ===================== -->
+  <main id="game" class="face-panel" hidden>
+    <div class="game-wrap">
+      <p class="game-help" data-i18n="game_help">Courez et sautez sous les boîtes pour les ouvrir : chaque coup ajoute une pâtisserie à votre commande.</p>
+      <div class="stage">
+        <canvas id="canvas" width="800" height="360" aria-label="Mini-jeu de commande"></canvas>
+        <div class="hud"><span id="hud-items">0</span> <span data-i18n="hud_items">articles</span> · <span id="hud-total">0 FCFA</span></div>
+        <button class="btn btn-small hud-order" type="button" id="game-order" data-i18n="game_order">Voir ma commande</button>
+      </div>
+      <div class="pad" id="pad">
+        <button type="button" data-key="left" aria-label="Gauche">◀</button>
+        <button type="button" data-key="right" aria-label="Droite">▶</button>
+        <button type="button" data-key="jump" class="jump" aria-label="Saut" data-i18n="btn_jump">SAUT</button>
+      </div>
+      <p class="keys" data-i18n="game_keys">Clavier : flèches ou A/D pour bouger, espace pour sauter.</p>
+      <button class="btn btn-ghost" type="button" data-go-shop data-i18n="game_back">← Retour à la boutique</button>
+    </div>
+  </main>
+
+  <footer class="foot">© <span id="year"></span> Danis · <span data-i18n="foot_proto">Prototype</span></footer>
+
+  <!-- ===================== CART / CHECKOUT (shared by both faces) ===================== -->
+  <div class="scrim" id="scrim" hidden></div>
+  <aside class="drawer" id="drawer" aria-hidden="true">
+    <div class="drawer-head"><h2 data-i18n="cart_title">Ma commande</h2><button id="close-cart" type="button" aria-label="Fermer">✕</button></div>
+    <div class="drawer-body">
+      <div id="cart-empty" class="empty" data-i18n="cart_empty">Votre panier est vide.</div>
+      <ul class="lines" id="lines"></ul>
+      <form id="checkout" novalidate hidden>
+        <label class="field"><span data-i18n="f_name">Nom</span><input id="name" autocomplete="name" required></label>
+        <label class="field"><span data-i18n="f_phone">Téléphone (WhatsApp)</span><input id="phone" type="tel" autocomplete="tel" placeholder="+221 77 000 00 00" required></label>
+        <div class="seg">
+          <label><input type="radio" name="mode" value="pickup" checked><span data-i18n="mode_pickup">Retrait en boutique</span></label>
+          <label><input type="radio" name="mode" value="delivery"><span data-i18n="mode_delivery">Livraison</span></label>
+        </div>
+        <label class="field" id="addr-field" hidden><span data-i18n="f_addr">Adresse de livraison</span><input id="addr" autocomplete="street-address"></label>
+        <label class="field"><span data-i18n="f_date">Pour quand ?</span><input id="when" type="date"></label>
+        <label class="field"><span data-i18n="f_note">Message (facultatif)</span><textarea id="note" rows="2"></textarea></label>
+        <p class="lbl" data-i18n="pay_title">Paiement</p>
+        <div class="pay">
+          <label><input type="radio" name="pay" value="wave" checked><span class="chip wave">Wave</span></label>
+          <label><input type="radio" name="pay" value="om"><span class="chip om">Orange Money</span></label>
+          <label><input type="radio" name="pay" value="card"><span class="chip" data-i18n="pay_card">Carte bancaire</span></label>
+          <label><input type="radio" name="pay" value="cash"><span class="chip" data-i18n="pay_cash">Espèces</span></label>
+        </div>
+        <p class="hint" id="pay-hint"></p>
+        <dl class="totals">
+          <dt data-i18n="t_sub">Sous-total</dt><dd id="t-sub">0</dd>
+          <dt data-i18n="t_delivery">Livraison</dt><dd id="t-del">0</dd>
+          <dt class="big" data-i18n="t_total">Total</dt><dd class="big" id="t-total">0</dd>
+        </dl>
+        <p class="error" id="error" role="alert" hidden></p>
+        <button class="btn btn-block" type="submit" data-i18n="cta_send">Envoyer ma commande</button>
+      </form>
+      <div id="done" class="done" hidden>
+        <h3 data-i18n="done_title">Commande envoyée ✔</h3>
+        <p id="done-text"></p>
+        <details><summary data-i18n="done_msg">Message reçu par la pâtisserie (aperçu du prototype)</summary><pre id="done-msg"></pre></details>
+        <button class="btn btn-ghost" id="done-close" type="button" data-i18n="done_close">Fermer</button>
+      </div>
+    </div>
+  </aside>
+
+  <script src="app.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
