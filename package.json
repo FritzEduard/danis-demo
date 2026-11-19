@@ -1,0 +1,10 @@
+{
+  "name": "danis",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler pages dev . --port 8788",
+    "db:local": "wrangler d1 execute danis --local --file=migrations/0001_orders.sql && wrangler d1 execute danis --local --file=migrations/0002_products.sql",
+    "db:remote": "wrangler d1 execute danis --remote --file=migrations/0001_orders.sql && wrangler d1 execute danis --remote --file=migrations/0002_products.sql"
+  },
+  "devDependencies": { "wrangler": "^4" }
+}

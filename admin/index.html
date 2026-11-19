@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Danis — Gestion</title>
+<link rel="icon" href="../assets/logo.png">
+<style>
+:root{--bg:#faf7fd;--ink:#2a1840;--muted:#6f6483;--line:#e4dbf0;--p:#592b89;--soft:#ece4f6;--teal:#40bdbd;--ok:#2f9e6b;--bad:#d6453b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+[hidden]{display:none!important}
+header{display:flex;align-items:center;gap:12px;padding:10px 14px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+header img{height:36px}header .sp{flex:1}
+main{max-width:860px;margin:0 auto;padding:16px 14px 60px}
+h2{margin:18px 0 10px;color:var(--p)}
+button,.btn{font:inherit;font-weight:700;border:0;border-radius:999px;padding:10px 18px;background:var(--p);color:#fff;cursor:pointer}
+button.ghost{background:#fff;color:var(--p);border:1px solid var(--line)}button.bad{background:var(--bad)}button.ok{background:var(--ok)}button.sm{padding:6px 12px;font-size:.9rem}
+input,textarea,select{font:inherit;width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+input[type=checkbox]{width:auto}input[type=color]{padding:2px;height:42px}
+label{display:block;font-size:.85rem;color:var(--muted);margin-top:10px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+.tabs{display:flex;gap:6px;margin-bottom:10px}.tabs button{background:var(--soft);color:var(--p)}.tabs button.on{background:var(--p);color:#fff}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.grow{flex:1;min-width:0}
+.pic{width:56px;height:56px;border-radius:12px;display:grid;place-items:center;font-size:1.8rem;overflow:hidden;flex:none}.pic img{width:100%;height:100%;object-fit:cover}
+.price{font-weight:800;white-space:nowrap}.off{opacity:.5}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:520px){.grid2{grid-template-columns:1fr}}
+.tag{display:inline-block;padding:2px 10px;border-radius:999px;font-size:.8rem;font-weight:700;background:var(--soft);color:var(--p)}
+.tag.confirmed,.tag.done{background:#dff5ea;color:var(--ok)}.tag.refused,.tag.cancelled{background:#fbe3e0;color:var(--bad)}
+.err{color:var(--bad);font-weight:700;margin:8px 0 0}
+.login{max-width:340px;margin:60px auto}
+small{color:var(--muted)}
+</style>
+</head>
+<body>
+<header><img src="../assets/logo.png" alt="Danis"><b>Gestion</b><span class="sp"></span><button class="ghost sm" id="logout" hidden>Déconnexion</button></header>
+<main>
+  <form id="login" class="card login" hidden>
+    <h2 style="margin-top:0">Connexion</h2>
+    <label for="pw">Mot de passe</label><input id="pw" type="password" autocomplete="current-password" required>
+    <p class="err" id="login-err" hidden></p>
+    <p><button type="submit">Entrer</button></p>
+  </form>
+
+  <div id="app" hidden>
+    <div class="tabs"><button class="on" data-tab="products">Pâtisseries</button><button data-tab="orders">Commandes</button><button data-tab="settings">Réglages</button></div>
+
+    <section id="t-products">
+      <div class="row"><h2 class="grow" style="margin:0">Pâtisseries et prix</h2><button id="new">+ Ajouter</button></div>
+      <div id="plist" style="margin-top:12px"></div>
+      <form id="pform" class="card" hidden>
+        <h3 id="ptitle" style="margin:0 0 4px"></h3>
+        <div class="grid2">
+          <div><label>Nom (français)</label><input id="f-fr" required maxlength="80"></div>
+          <div><label>Nom (anglais)</label><input id="f-en" maxlength="80"></div>
+          <div><label>Description (français)</label><textarea id="f-dfr" rows="2" maxlength="300"></textarea></div>
+          <div><label>Description (anglais)</label><textarea id="f-den" rows="2" maxlength="300"></textarea></div>
+          <div><label>Prix (FCFA)</label><input id="f-price" type="number" min="0" step="50" inputmode="numeric" required></div>
+          <div><label>Position dans la liste</label><input id="f-sort" type="number" step="1"></div>
+          <div><label>Emoji (boîte du jeu)</label><input id="f-emoji" maxlength="8"></div>
+          <div><label>Couleur de fond</label><input id="f-color" type="color"></div>
+        </div>
+        <label>Photo (JPG ou PNG, redimensionnée automatiquement)</label>
+        <div class="row"><div class="pic" id="f-prev"></div><input id="f-file" type="file" accept="image/*" class="grow"><button type="button" class="ghost sm" id="f-rm">Retirer la photo</button></div>
+        <label><input type="checkbox" id="f-active"> Visible dans la boutique et le jeu</label>
+        <p class="err" id="perr" hidden></p>
+        <div class="row" style="margin-top:12px"><button type="submit">Enregistrer</button><button type="button" class="ghost" id="pcancel">Annuler</button></div>
+      </form>
+    </section>
+
+    <section id="t-orders" hidden>
+      <div class="row"><h2 class="grow" style="margin:0">Commandes</h2><button class="ghost sm" id="reload">Actualiser</button></div>
+      <div id="olist" style="margin-top:12px"></div>
+    </section>
+
+    <section id="t-settings" hidden>
+      <h2>Réglages</h2>
+      <form id="sform" class="card"><label>Frais de livraison (FCFA)</label><input id="s-fee" type="number" min="0" step="100" inputmode="numeric" required>
+        <p class="err" id="serr" hidden></p><p><button type="submit">Enregistrer</button> <small id="sok" hidden>Enregistré ✔</small></p></form>
+    </section>
+  </div>
+</main>
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var money = function (n) { return Number(n).toLocaleString('fr-FR').replace(/[  ]/g, ' ') + ' FCFA'; };
+  var state = { products: [], editing: null, photo: undefined };
+  var PAY = { wave: 'Wave', om: 'Orange Money', card: 'Carte', cash: 'Espèces' };
+  var STATUS = { pending: 'À traiter', confirmed: 'Confirmée', refused: 'Refusée', done: 'Terminée', cancelled: 'Annulée' };
+
+  function api(path, opts) {
+    opts = opts || {}; opts.credentials = 'same-origin';
+    if (opts.body && typeof opts.body !== 'string') { opts.body = JSON.stringify(opts.body); opts.headers = { 'content-type': 'application/json' }; }
+    return fetch('/api/admin/' + path, opts).then(function (r) {
+      if (r.status === 401) { showLogin(); throw new Error('auth'); }
+      return r.json().then(function (j) { if (!r.ok) { var e = new Error(j.error || 'http'); e.code = j.error; throw e; } return j; });
+    });
+  }
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) { e.className = cls; } if (text != null) { e.textContent = text; } return e; }
+  function showLogin(msg) { $('app').hidden = true; $('logout').hidden = true; $('login').hidden = false; if (msg) { $('login-err').textContent = msg; $('login-err').hidden = false; } }
+  function showApp() { $('login').hidden = true; $('app').hidden = false; $('logout').hidden = false; loadProducts(); }
+
+  /* ---- login ---- */
+  $('login').addEventListener('submit', function (e) {
+    e.preventDefault(); $('login-err').hidden = true;
+    fetch('/api/admin/login', { method: 'POST', credentials: 'same-origin', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ password: $('pw').value }) })
+      .then(function (r) { return r.json().then(function (j) { return { r: r, j: j }; }); })
+      .then(function (x) {
+        if (x.r.ok) { $('pw').value = ''; showApp(); }
+        else { showLogin(x.j.error === 'admin_not_configured' ? "L'accès gestion n'est pas encore activé (mot de passe non configuré)." : 'Mot de passe incorrect.'); }
+      });
+  });
+  $('logout').addEventListener('click', function () { fetch('/api/admin/login', { method: 'DELETE', credentials: 'same-origin' }).then(function () { showLogin(); }); });
+
+  /* ---- tabs ---- */
+  document.querySelectorAll('.tabs button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      document.querySelectorAll('.tabs button').forEach(function (x) { x.classList.toggle('on', x === b); });
+      ['products', 'orders', 'settings'].forEach(function (t) { $('t-' + t).hidden = t !== b.dataset.tab; });
+      if (b.dataset.tab === 'orders') { loadOrders(); }
+    });
+  });
+
+  /* ---- products ---- */
+  function loadProducts() {
+    api('products').then(function (d) {
+      state.products = d.products; $('s-fee').value = d.deliveryFee; renderProducts();
+    }).catch(function () {});
+  }
+  function renderProducts() {
+    var box = $('plist'); box.innerHTML = '';
+    state.products.forEach(function (p) {
+      var c = el('div', 'card row' + (p.active ? '' : ' off'));
+      var pic = el('div', 'pic'); pic.style.background = p.color;
+      if (p.has_photo) { var im = document.createElement('img'); im.alt = ''; im.src = '/api/photo?id=' + encodeURIComponent(p.id) + '&v=' + p.updated; pic.appendChild(im); } else { pic.textContent = p.emoji; }
+      var mid = el('div', 'grow'); mid.appendChild(el('b', null, p.fr)); mid.appendChild(el('div', null, '')).appendChild(el('span', 'price', money(p.price)));
+      if (!p.active) { mid.appendChild(el('small', null, ' (masquée)')); }
+      var ed = el('button', 'ghost sm', 'Modifier'); ed.addEventListener('click', function () { edit(p); });
+      c.appendChild(pic); c.appendChild(mid); c.appendChild(ed); box.appendChild(c);
+    });
+  }
+  function preview() {
+    var pv = $('f-prev'); pv.innerHTML = ''; pv.style.background = $('f-color').value;
+    var src = state.photo !== undefined ? state.photo : (state.editing && state.editing.has_photo ? '/api/photo?id=' + encodeURIComponent(state.editing.id) + '&v=' + state.editing.updated : null);
+    if (src) { var im = document.createElement('img'); im.alt = ''; im.src = src; pv.appendChild(im); } else { pv.textContent = $('f-emoji').value || '🧁'; }
+  }
+  function edit(p) {
+    state.editing = p; state.photo = undefined;
+    $('ptitle').textContent = p ? 'Modifier : ' + p.fr : 'Nouvelle pâtisserie';
+    $('f-fr').value = p ? p.fr : ''; $('f-en').value = p ? p.en : ''; $('f-dfr').value = p ? p.dfr : ''; $('f-den').value = p ? p.den : '';
+    $('f-price').value = p ? p.price : ''; $('f-sort').value = p ? p.sort : state.products.length + 1;
+    $('f-emoji').value = p ? p.emoji : '🧁'; $('f-color').value = p ? p.color : '#ece4f6'; $('f-active').checked = p ? !!p.active : true;
+    $('f-file').value = ''; $('perr').hidden = true; $('pform').hidden = false; preview(); $('pform').scrollIntoView({ behavior: 'smooth' });
+  }
+  $('new').addEventListener('click', function () { edit(null); });
+  $('pcancel').addEventListener('click', function () { $('pform').hidden = true; });
+  $('f-emoji').addEventListener('input', preview); $('f-color').addEventListener('input', preview);
+  $('f-rm').addEventListener('click', function () { state.photo = null; $('f-file').value = ''; preview(); });
+  $('f-file').addEventListener('change', function () {
+    var f = this.files[0]; if (!f) { return; }
+    var img = new Image(), url = URL.createObjectURL(f);
+    img.onload = function () {
+      var max = 800, s = Math.min(1, max / Math.max(img.width, img.height)), c = document.createElement('canvas');
+      c.width = Math.round(img.width * s); c.height = Math.round(img.height * s);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      state.photo = c.toDataURL('image/jpeg', 0.82); URL.revokeObjectURL(url); preview();
+    };
+    img.onerror = function () { $('perr').textContent = "Image illisible."; $('perr').hidden = false; };
+    img.src = url;
+  });
+  $('pform').addEventListener('submit', function (e) {
+    e.preventDefault(); $('perr').hidden = true;
+    var body = { id: state.editing ? state.editing.id : undefined, fr: $('f-fr').value, en: $('f-en').value, dfr: $('f-dfr').value, den: $('f-den').value,
+      price: $('f-price').value, sort: $('f-sort').value, emoji: $('f-emoji').value, color: $('f-color').value, active: $('f-active').checked };
+    if (state.photo !== undefined) { body.photo = state.photo; }
+    api('products', { method: 'POST', body: body }).then(function () { $('pform').hidden = true; loadProducts(); })
+      .catch(function (err) { if (err.message === 'auth') { return; } $('perr').textContent = { price: 'Prix invalide.', name: 'Le nom est obligatoire.', photo: 'Photo trop lourde ou invalide.' }[err.code] || 'Erreur, réessayez.'; $('perr').hidden = false; });
+  });
+
+  /* ---- orders ---- */
+  function loadOrders() {
+    api('orders').then(function (d) {
+      var box = $('olist'); box.innerHTML = '';
+      if (!d.orders.length) { box.appendChild(el('p', null, 'Aucune commande pour le moment.')); }
+      d.orders.forEach(function (o) {
+        var c = el('div', 'card'), top = el('div', 'row');
+        top.appendChild(el('b', 'grow', o.id + ' · ' + money(o.total))); top.appendChild(el('span', 'tag ' + o.status, STATUS[o.status] || o.status)); c.appendChild(top);
+        c.appendChild(el('small', null, new Date(o.created).toLocaleString('fr-FR')));
+        var items = Object.keys(o.items).map(function (id) { return o.items[id] + ' × ' + (d.names[id] || id); }).join(', ');
+        c.appendChild(el('div', null, items));
+        c.appendChild(el('div', null, o.name + ' · ' + o.phone + ' · ' + (PAY[o.pay] || o.pay)));
+        c.appendChild(el('div', null, o.mode === 'delivery' ? 'Livraison : ' + o.addr : 'Retrait en boutique'));
+        if (o.due) { c.appendChild(el('div', null, 'Pour le : ' + o.due)); }
+        if (o.note) { c.appendChild(el('div', null, 'Message : ' + o.note)); }
+        var acts = el('div', 'row'); acts.style.marginTop = '8px';
+        [['confirmed', 'Confirmer', 'ok'], ['refused', 'Refuser', 'bad'], ['done', 'Terminée', 'ghost']].forEach(function (a) {
+          if (o.status === a[0]) { return; }
+          var b = el('button', 'sm ' + a[2], a[1]);
+          b.addEventListener('click', function () { api('orders', { method: 'POST', body: { id: o.id, status: a[0] } }).then(loadOrders); });
+          acts.appendChild(b);
+        });
+        c.appendChild(acts); box.appendChild(c);
+      });
+    }).catch(function () {});
+  }
+  $('reload').addEventListener('click', loadOrders);
+
+  /* ---- settings ---- */
+  $('sform').addEventListener('submit', function (e) {
+    e.preventDefault(); $('serr').hidden = true; $('sok').hidden = true;
+    api('products', { method: 'POST', body: { deliveryFee: $('s-fee').value } }).then(function () { $('sok').hidden = false; })
+      .catch(function () { $('serr').textContent = 'Montant invalide.'; $('serr').hidden = false; });
+  });
+
+  api('products').then(function (d) { state.products = d.products; $('s-fee').value = d.deliveryFee; $('login').hidden = true; $('app').hidden = false; $('logout').hidden = false; renderProducts(); })
+    .catch(function (e) { if (e.message !== 'auth') { showLogin(e.code === 'admin_not_configured' ? "L'accès gestion n'est pas encore activé (mot de passe non configuré)." : null); } });
+})();
+</script>
+</body>
+</html>

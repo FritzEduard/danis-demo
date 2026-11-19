@@ -100,10 +100,12 @@
   var t = function (k) { return TEXT[lang][k]; };
   var cart = {};
   try { cart = JSON.parse(localStorage.getItem('danis.cart') || '{}'); } catch (e) { cart = {}; }
-  var listeners = [];
+  var listeners = [], productListeners = [];
+  function esc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
 
   function money(n) { return n.toLocaleString('fr-FR').replace(/ | /g, ' ') + ' FCFA'; }
   function product(id) { return PRODUCTS.filter(function (p) { return p.id === id; })[0]; }
+  function dropUnknown() { Object.keys(cart).forEach(function (id) { if (!product(id)) { delete cart[id]; } }); }
   function pname(p) { return lang === 'fr' ? p.fr : p.en; }
 
   /* ---------- cart ---------- */
@@ -122,7 +124,7 @@
     ul.innerHTML = '';
     ids.forEach(function (id) {
       var p = product(id), li = document.createElement('li');
-      li.innerHTML = '<span class="e">' + p.emoji + '</span><span class="n">' + pname(p) + '<small>' + money(p.price) + '</small></span>' +
+      li.innerHTML = '<span class="e">' + esc(p.emoji) + '</span><span class="n">' + esc(pname(p)) + '<small>' + money(p.price) + '</small></span>' +
         '<span class="qty"><button type="button" aria-label="-">−</button><b>' + cart[id] + '</b><button type="button" aria-label="+">+</button></span>';
       var b = li.querySelectorAll('button');
       b[0].addEventListener('click', function () { change(id, -1); });
@@ -174,12 +176,21 @@
       subtotal: sub, delivery: del, total: sub + del, status: 'pending', created: new Date().toISOString()
     };
 
-    // STUB: store the order and notify the shop (see the note at the top of this file).
-    try {
-      var all = JSON.parse(localStorage.getItem('danis.orders') || '[]'); all.push(order);
-      localStorage.setItem('danis.orders', JSON.stringify(all));
-    } catch (e) { /* ignore */ }
+    var btn = $('checkout').querySelector('button[type=submit]'); btn.disabled = true;
+    fetch('/api/orders', { method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ name: name, phone: phone, mode: mode, addr: order.addr, when: order.when, note: order.note, pay: order.pay, items: order.items }) })
+      .then(function (r) { if (!r.ok) { throw new Error('http ' + r.status); } return r.json(); })
+      .then(function (res) { order.id = res.id; order.total = res.total; finish(order, false); })
+      .catch(function () {
+        // Fallback when no server is reachable (static preview): keep the order in localStorage only.
+        try { var all = JSON.parse(localStorage.getItem('danis.orders') || '[]'); all.push(order); localStorage.setItem('danis.orders', JSON.stringify(all)); } catch (e) { /* ignore */ }
+        finish(order, true);
+      })
+      .then(function () { btn.disabled = false; });
+  }
 
+  function finish(order, offline) {
+    var mode = order.mode, name = order.name, phone = order.phone;
     var lines = Object.keys(order.items).map(function (id) { var p = product(id); return ' - ' + order.items[id] + ' x ' + p.fr + ' (' + money(p.price) + ')'; });
     $('done-msg').textContent = 'To: ' + CONFIG.shopContact + '\nNew order ' + order.id + '\n\n' + lines.join('\n') + '\n\nTotal: ' + money(order.total) +
       '\n' + TEXT.fr.modeName[mode] + (order.addr ? ': ' + order.addr : '') + (order.when ? '\nFor: ' + order.when : '') +
@@ -196,8 +207,8 @@
     var g = $('grid'); g.innerHTML = '';
     PRODUCTS.forEach(function (p) {
       var el = document.createElement('article'); el.className = 'item';
-      el.innerHTML = '<div class="pic" style="background:' + p.color + '">' + p.emoji + '</div><div class="body"><h3>' + pname(p) + '</h3><p>' +
-        (lang === 'fr' ? p.dfr : p.den) + '</p><div class="row"><span class="price">' + money(p.price) + '</span><button class="add" type="button">+ ' + t('add') + '</button></div></div>';
+      el.innerHTML = '<div class="pic" style="background:' + esc(p.color) + '">' + (p.photo ? '<img src="' + esc(p.photo) + '" alt="' + esc(pname(p)) + '" loading="lazy">' : esc(p.emoji)) + '</div><div class="body"><h3>' + esc(pname(p)) + '</h3><p>' +
+        esc(lang === 'fr' ? p.dfr : p.den) + '</p><div class="row"><span class="price">' + money(p.price) + '</span><button class="add" type="button">+ ' + t('add') + '</button></div></div>';
       el.querySelector('.add').addEventListener('click', function () { change(p.id, 1); });
       g.appendChild(el);
     });
@@ -249,9 +260,21 @@
 
   window.Danis = {
     products: PRODUCTS, add: function (id) { change(id, 1); }, count: count, subtotal: subtotal, money: money,
-    openCart: openCart, text: t, pname: pname, onChange: function (fn) { listeners.push(fn); }
+    openCart: openCart, text: t, pname: pname, onChange: function (fn) { listeners.push(fn); },
+    onProducts: function (fn) { productListeners.push(fn); }
   };
 
-  applyText();
+  // The catalog and delivery fee come from the server (edited in /admin). The built-in list is the offline fallback.
+  function loadProducts() {
+    fetch('/api/products').then(function (r) { if (!r.ok) { throw new Error('http'); } return r.json(); }).then(function (d) {
+      if (!d.products || !d.products.length) { return; }
+      PRODUCTS.length = 0; d.products.forEach(function (p) { PRODUCTS.push(p); });
+      CONFIG.deliveryFee = d.deliveryFee;
+      dropUnknown(); persist(); renderGrid(); renderCart();
+      productListeners.forEach(function (fn) { fn(); }); listeners.forEach(function (fn) { fn(); });
+    }).catch(function () { /* no server: keep built-in catalog */ });
+  }
+
+  applyText(); loadProducts();
   if (location.hash === '#game') { showFace('game'); }
 })();
