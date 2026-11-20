@@ -113,3 +113,6 @@ input:focus,textarea:focus{outline:2px solid var(--pink);outline-offset:1px}
   .logo span{display:none}
   .face{padding:8px 9px}
 }
+/* roomier header with a bigger logo on larger screens */
+@media (min-width:900px){.top{padding:16px 32px;gap:16px}.logo img{height:64px}.face{padding:11px 20px;font-size:1.05rem}.lang{padding:10px 14px}.cart-btn{width:50px;height:46px}html{scroll-padding-top:100px}}
+@media (min-width:600px) and (max-width:899px){.top{padding:12px 20px}.logo img{height:48px}}

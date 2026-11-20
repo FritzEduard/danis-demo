@@ -98,21 +98,96 @@
     ctx.fillStyle = '#3f1d66'; ctx.fillText(text, cx, y);
   }
 
+  /* ---------- Dakar backdrop: original, simplified drawings of local landmarks, in parallax layers ---------- */
+  var HZ = 236; // sea horizon
+  function layer(par, cycle, fn) {
+    var off = (camX * par) % cycle;
+    for (var k = -1; k * cycle - off < W + 60; k++) { fn(k * cycle - off); }
+  }
+  function dome(x, y, r, col) { ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x, y, r, Math.PI, 0); ctx.fill(); }
+  function minaret(x, base, h, w, body, cap) {
+    ctx.fillStyle = body; ctx.fillRect(x - w / 2, base - h, w, h);
+    ctx.fillStyle = cap; ctx.beginPath(); ctx.moveTo(x - w / 2 - 2, base - h); ctx.lineTo(x, base - h - w * 1.6); ctx.lineTo(x + w / 2 + 2, base - h); ctx.fill();
+    ctx.fillStyle = body; ctx.fillRect(x - w / 2 - 2, base - h * 0.62, w + 4, 3);
+  }
+  function baobab(x, b, s) {
+    ctx.fillStyle = '#8a6a4b';
+    ctx.beginPath(); ctx.moveTo(x - 16 * s, b); ctx.quadraticCurveTo(x - 7 * s, b - 34 * s, x - 9 * s, b - 52 * s);
+    ctx.lineTo(x + 9 * s, b - 52 * s); ctx.quadraticCurveTo(x + 7 * s, b - 34 * s, x + 16 * s, b); ctx.fill();
+    ctx.strokeStyle = '#8a6a4b'; ctx.lineWidth = 4 * s; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(x - 6 * s, b - 50 * s); ctx.lineTo(x - 22 * s, b - 66 * s); ctx.moveTo(x + 6 * s, b - 50 * s); ctx.lineTo(x + 22 * s, b - 68 * s); ctx.moveTo(x, b - 52 * s); ctx.lineTo(x, b - 72 * s); ctx.stroke();
+    ctx.fillStyle = '#5f9f5f';
+    [[-24, -70, 13], [-8, -78, 15], [10, -76, 14], [24, -70, 12], [0, -66, 12]].forEach(function (c) { ctx.beginPath(); ctx.arc(x + c[0] * s, b + c[1] * s, c[2] * s, 0, 6.3); ctx.fill(); });
+  }
+  function palm(x, b, s) {
+    ctx.strokeStyle = '#9a7650'; ctx.lineWidth = 5 * s; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(x, b); ctx.quadraticCurveTo(x + 10 * s, b - 45 * s, x + 4 * s, b - 86 * s); ctx.stroke();
+    ctx.strokeStyle = '#4f9a5a'; ctx.lineWidth = 4 * s;
+    [-70, -35, 0, 35, 70].forEach(function (a) {
+      var r = a * Math.PI / 180; ctx.beginPath(); ctx.moveTo(x + 4 * s, b - 86 * s);
+      ctx.quadraticCurveTo(x + 4 * s + Math.sin(r) * 22 * s, b - 86 * s - 22 * s + Math.abs(a) * 0.15 * s, x + 4 * s + Math.sin(r) * 40 * s, b - 86 * s - 4 * s + Math.abs(a) * 0.35 * s); ctx.stroke();
+    });
+  }
+  function pirogue(x, y, col, band) {
+    ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(x - 26, y - 8); ctx.quadraticCurveTo(x, y + 6, x + 26, y - 8); ctx.lineTo(x + 22, y - 3); ctx.quadraticCurveTo(x, y + 8, x - 22, y - 3); ctx.fill();
+    ctx.fillStyle = band; ctx.fillRect(x - 17, y - 5, 34, 2.5);
+    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.moveTo(x - 2, y - 7); ctx.lineTo(x - 2, y - 26); ctx.lineTo(x + 12, y - 7); ctx.fill();
+  }
+  function goree(x) { // Goree island: low ochre island with red-roofed houses
+    ctx.fillStyle = '#c99a6b'; ctx.beginPath(); ctx.ellipse(x, HZ, 90, 16, 0, Math.PI, 0); ctx.fill();
+    [[-55, 14], [-34, 18], [-10, 22], [14, 16], [36, 20], [58, 12]].forEach(function (h) {
+      ctx.fillStyle = '#f2d7b3'; ctx.fillRect(x + h[0], HZ - h[1], 16, h[1]);
+      ctx.fillStyle = '#c4533a'; ctx.beginPath(); ctx.moveTo(x + h[0] - 2, HZ - h[1]); ctx.lineTo(x + h[0] + 8, HZ - h[1] - 7); ctx.lineTo(x + h[0] + 18, HZ - h[1]); ctx.fill();
+    });
+  }
+  function mamelles(x) { // Les Mamelles: two hills, the lighthouse on one and the African Renaissance Monument on the other
+    ctx.fillStyle = '#9cc79a'; ctx.beginPath(); ctx.arc(x - 70, HZ + 30, 70, Math.PI, 0); ctx.fill();
+    ctx.fillStyle = '#8bbb8b'; ctx.beginPath(); ctx.arc(x + 60, HZ + 36, 78, Math.PI, 0); ctx.fill();
+    var lx = x - 70, ly = HZ - 40; // lighthouse (left hill)
+    ctx.fillStyle = '#fff'; ctx.fillRect(lx - 5, ly - 38, 10, 38);
+    ctx.fillStyle = '#3f1d66'; ctx.fillRect(lx - 5, ly - 24, 10, 6);
+    ctx.fillStyle = '#592b89'; ctx.fillRect(lx - 7, ly - 44, 14, 6);
+    ctx.fillStyle = '#f2b24a'; ctx.beginPath(); ctx.arc(lx, ly - 47, 4, 0, 6.3); ctx.fill();
+    var mx = x + 60, my = HZ - 42; // African Renaissance Monument (right hill): tall bronze figure group
+    ctx.save(); ctx.translate(mx, my); ctx.scale(1.45, 1.45); ctx.translate(-mx, -my);
+    ctx.fillStyle = '#a8764a';
+    ctx.beginPath(); ctx.moveTo(mx - 10, my); ctx.lineTo(mx - 5, my - 52); ctx.lineTo(mx + 5, my - 52); ctx.lineTo(mx + 10, my); ctx.fill();
+    ctx.beginPath(); ctx.arc(mx, my - 58, 5, 0, 6.3); ctx.fill();
+    ctx.strokeStyle = '#a8764a'; ctx.lineWidth = 4; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(mx + 3, my - 46); ctx.lineTo(mx + 26, my - 62); ctx.stroke();
+    ctx.beginPath(); ctx.arc(mx + 14, my - 50, 3.5, 0, 6.3); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(mx - 14, my - 14); ctx.lineTo(mx - 26, my - 30); ctx.lineTo(mx - 8, my - 24); ctx.fill();
+    ctx.restore();
+  }
+  function mosque(x, b) { // Mosquee de la Divinite (Ouakam): white mosque with two minarets on the shore
+    ctx.fillStyle = '#f7f2ea'; ctx.fillRect(x - 42, b - 38, 84, 38);
+    dome(x, b - 38, 24, '#e8f3f2'); ctx.fillStyle = '#40bdbd'; ctx.fillRect(x - 1.5, b - 70, 3, 10);
+    minaret(x - 54, b, 78, 11, '#f7f2ea', '#40bdbd'); minaret(x + 54, b, 78, 11, '#f7f2ea', '#40bdbd');
+    ctx.fillStyle = '#40bdbd';
+    for (var i = -2; i <= 2; i++) { ctx.beginPath(); ctx.arc(x + i * 14, b - 12, 5, Math.PI, 0); ctx.fill(); ctx.fillRect(x + i * 14 - 5, b - 12, 10, 12); }
+  }
+
   function drawBackground() {
-    var g = ctx.createLinearGradient(0, 0, 0, GROUND);
-    g.addColorStop(0, '#a8e4e6'); g.addColorStop(1, '#f3eefa');
+    var g = ctx.createLinearGradient(0, 0, 0, HZ);
+    g.addColorStop(0, '#8fd8e4'); g.addColorStop(0.7, '#d9f1f1'); g.addColorStop(1, '#fff3dc');
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-    // hills (slow) and clouds (slower)
-    ctx.fillStyle = '#d9f1f1';
-    for (var i = -1; i < 6; i++) {
-      var hx = i * 380 - (camX * 0.35) % 380;
-      ctx.beginPath(); ctx.arc(hx + 190, GROUND + 40, 190, Math.PI, 0); ctx.fill();
-    }
-    ctx.fillStyle = 'rgba(255,255,255,.9)';
+    var sx = 640 - (camX * 0.03) % 900, sg = ctx.createRadialGradient(sx, 70, 6, sx, 70, 80); // sun with halo
+    sg.addColorStop(0, 'rgba(255,225,130,1)'); sg.addColorStop(0.3, 'rgba(255,225,130,.9)'); sg.addColorStop(1, 'rgba(255,225,130,0)');
+    ctx.fillStyle = sg; ctx.fillRect(sx - 90, 0, 180, 160);
+    ctx.fillStyle = 'rgba(255,255,255,.85)'; // clouds
     for (var c = -1; c < 6; c++) {
-      var cx = c * 300 - (camX * 0.15) % 300 + 60, cy = 50 + (c % 2) * 40;
-      ctx.beginPath(); ctx.arc(cx, cy, 20, 0, 6.3); ctx.arc(cx + 24, cy + 4, 26, 0, 6.3); ctx.arc(cx + 52, cy, 18, 0, 6.3); ctx.fill();
+      var cx = c * 300 - (camX * 0.1) % 300 + 60, cy = 44 + (c % 2) * 36;
+      ctx.beginPath(); ctx.arc(cx, cy, 18, 0, 6.3); ctx.arc(cx + 22, cy + 4, 24, 0, 6.3); ctx.arc(cx + 48, cy, 16, 0, 6.3); ctx.fill();
     }
+    var sea = ctx.createLinearGradient(0, HZ, 0, GROUND); sea.addColorStop(0, '#7fd3d6'); sea.addColorStop(1, '#40bdbd');
+    ctx.fillStyle = sea; ctx.fillRect(0, HZ, W, GROUND - HZ + 2);
+    ctx.fillStyle = 'rgba(255,255,255,.5)';
+    layer(0.3, 160, function (x0) { for (var i = 0; i < 3; i++) { ctx.fillRect(x0 + 20 + i * 50, HZ + 14 + i * 10, 22, 2); } });
+    ctx.globalAlpha = 0.85; // far layer, slightly hazy: Goree and the Mamelles hills
+    layer(0.18, 1500, function (x0) { goree(x0 + 260); mamelles(x0 + 980); });
+    ctx.globalAlpha = 1;
+    layer(0.35, 900, function (x0) { pirogue(x0 + 140, HZ + 30, '#f2b24a', '#592b89'); pirogue(x0 + 520, HZ + 44, '#e8f3f2', '#c4533a'); pirogue(x0 + 760, HZ + 26, '#c4533a', '#fff'); });
+    layer(0.55, 1400, function (x0) { mosque(x0 + 640, GROUND); baobab(x0 + 1010, GROUND, 1.05); palm(x0 + 1170, GROUND, 1); baobab(x0 + 1330, GROUND, 0.85); });
   }
 
   function drawGround() {
