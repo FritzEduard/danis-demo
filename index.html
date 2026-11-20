@@ -44,7 +44,7 @@
     </section>
 
     <section id="cook" class="section cook">
-      <div class="cook-photo" aria-hidden="true">👩‍🍳<small data-i18n="ph_photo">Photo à venir</small></div>
+      <div class="cook-photo" id="cook-photo" aria-hidden="true">👩‍🍳<small data-i18n="ph_photo">Photo à venir</small></div>
       <div class="cook-text">
         <h2 data-i18n="cook_title">La pâtissière</h2>
         <p class="sub" data-i18n="cook_sub">Textes à remplacer par le vrai parcours.</p>
@@ -63,8 +63,8 @@
       <ul class="contact">
         <li>📍 <span data-i18n="ct_addr">Adresse de la pâtisserie, Dakar, Sénégal</span></li>
         <li>🕗 <span data-i18n="ct_hours">Lundi–samedi 8h–19h, dimanche 8h–13h</span></li>
-        <li>📞 <a href="tel:+221770000000">+221 77 000 00 00</a></li>
-        <li>💬 <a href="https://wa.me/221770000000">WhatsApp</a></li>
+        <li>📞 <a id="ct-phone" href="tel:+221770000000">+221 77 000 00 00</a></li>
+        <li>💬 <a id="ct-wa" href="https://wa.me/221770000000">WhatsApp</a></li>
       </ul>
     </section>
   </main>
@@ -132,6 +132,7 @@
     </div>
   </aside>
 
+  <script src="texts.js"></script>
   <script src="app.js"></script>
   <script src="game.js"></script>
 </body>

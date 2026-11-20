@@ -43,7 +43,7 @@ small{color:var(--muted)}
   </form>
 
   <div id="app" hidden>
-    <div class="tabs"><button class="on" data-tab="products">Pâtisseries</button><button data-tab="orders">Commandes</button><button data-tab="settings">Réglages</button></div>
+    <div class="tabs"><button class="on" data-tab="products">Pâtisseries</button><button data-tab="orders">Commandes</button><button data-tab="texts">Textes</button><button data-tab="settings">Réglages</button></div>
 
     <section id="t-products">
       <div class="row"><h2 class="grow" style="margin:0">Pâtisseries et prix</h2><button id="new">+ Ajouter</button></div>
@@ -73,6 +73,24 @@ small{color:var(--muted)}
       <div id="olist" style="margin-top:12px"></div>
     </section>
 
+    <section id="t-texts" hidden>
+      <h2>Textes du site</h2>
+      <p><small>Modifiez n'importe quel texte en français et en anglais. Laissez un champ vide (ou effacez-le) pour revenir au texte d'origine. Les changements apparaissent tout de suite sur le site.</small></p>
+      <form id="xform">
+        <div class="card"><h3 style="margin:0">Contact et photo de la pâtissière</h3>
+          <div class="grid2">
+            <div><label>Téléphone affiché</label><input id="x-phone" placeholder="+221 77 000 00 00"></div>
+            <div><label>Numéro WhatsApp (chiffres)</label><input id="x-wa" placeholder="221770000000" inputmode="numeric"></div>
+          </div>
+          <label>Photo de la pâtissière</label>
+          <div class="row"><div class="pic" id="x-prev" style="border-radius:50%"></div><input id="x-file" type="file" accept="image/*" class="grow"><button type="button" class="ghost sm" id="x-rm">Retirer la photo</button></div>
+        </div>
+        <div id="xgroups"></div>
+        <p class="err" id="xerr" hidden></p>
+        <p style="position:sticky;bottom:0;background:var(--bg);padding:10px 0"><button type="submit">Enregistrer les textes</button> <small id="xok" hidden>Enregistré ✔</small></p>
+      </form>
+    </section>
+
     <section id="t-settings" hidden>
       <h2>Réglages</h2>
       <form id="sform" class="card"><label>Frais de livraison (FCFA)</label><input id="s-fee" type="number" min="0" step="100" inputmode="numeric" required>
@@ -80,6 +98,7 @@ small{color:var(--muted)}
     </section>
   </div>
 </main>
+<script src="../texts.js"></script>
 <script>
 (function () {
   'use strict';
@@ -117,8 +136,9 @@ small{color:var(--muted)}
   document.querySelectorAll('.tabs button').forEach(function (b) {
     b.addEventListener('click', function () {
       document.querySelectorAll('.tabs button').forEach(function (x) { x.classList.toggle('on', x === b); });
-      ['products', 'orders', 'settings'].forEach(function (t) { $('t-' + t).hidden = t !== b.dataset.tab; });
+      ['products', 'orders', 'texts', 'settings'].forEach(function (t) { $('t-' + t).hidden = t !== b.dataset.tab; });
       if (b.dataset.tab === 'orders') { loadOrders(); }
+      if (b.dataset.tab === 'texts') { loadTexts(); }
     });
   });
 
@@ -205,6 +225,63 @@ small{color:var(--muted)}
     }).catch(function () {});
   }
   $('reload').addEventListener('click', loadOrders);
+
+  /* ---- site texts ---- */
+  var GROUPS = [
+    ['Accueil', /^(face_|hero_|cta_(order|play))/], ['Catalogue', /^(cat_|add$|ph_photo)/], ['La pâtissière', /^(cook_|cred_)/],
+    ['Contact et horaires', /^ct_/], ['Jeu', /^(game_|hud_|btn_jump)/],
+    ['Commande et paiement', /^(cart_|f_|mode_|pay_|hint_|t_|free$|cta_send|err_|done_)/], ['Autres', /./]
+  ];
+  var xState = { photo: undefined, hasPhoto: false, photoUrl: null, over: { fr: {}, en: {} } };
+  function xPreview() {
+    var pv = $('x-prev'); pv.innerHTML = '';
+    var src = xState.photo !== undefined ? xState.photo : xState.photoUrl;
+    if (src) { var im = document.createElement('img'); im.alt = ''; im.src = src; pv.appendChild(im); } else { pv.textContent = '👩‍🍳'; }
+  }
+  function loadTexts() {
+    api('site').then(function (d) {
+      xState.over = d.texts; xState.photo = undefined; xState.photoUrl = d.site.cookPhoto; $('x-file').value = '';
+      $('x-phone').value = d.site.phone; $('x-wa').value = d.site.whatsapp; xPreview();
+      var box = $('xgroups'); box.innerHTML = ''; var DEF = window.DANIS_TEXT, used = {};
+      GROUPS.forEach(function (g) {
+        var keys = Object.keys(DEF.fr).filter(function (k) { return !used[k] && typeof DEF.fr[k] === 'string' && g[1].test(k); });
+        if (!keys.length) { return; }
+        keys.forEach(function (k) { used[k] = 1; });
+        var card = el('div', 'card'); card.appendChild(el('h3', null, g[0])); card.firstChild.style.margin = '0';
+        keys.forEach(function (k) {
+          var row = el('div', 'grid2');
+          ['fr', 'en'].forEach(function (l) {
+            var wrap = document.createElement('div'), lab = el('label', null, (l === 'fr' ? 'Français' : 'Anglais') + ' · ' + k);
+            var long = (DEF[l][k] || '').length > 60, inp = document.createElement(long ? 'textarea' : 'input');
+            if (long) { inp.rows = 3; } inp.value = d.texts[l][k] || DEF[l][k]; inp.dataset.lang = l; inp.dataset.key = k; inp.dataset.def = DEF[l][k];
+            wrap.appendChild(lab); wrap.appendChild(inp); row.appendChild(wrap);
+          });
+          card.appendChild(row);
+        });
+        box.appendChild(card);
+      });
+    }).catch(function () {});
+  }
+  $('x-rm').addEventListener('click', function () { xState.photo = null; $('x-file').value = ''; xPreview(); });
+  $('x-file').addEventListener('change', function () {
+    var f = this.files[0]; if (!f) { return; }
+    var img = new Image(), url = URL.createObjectURL(f);
+    img.onload = function () {
+      var s = Math.min(1, 800 / Math.max(img.width, img.height)), c = document.createElement('canvas');
+      c.width = Math.round(img.width * s); c.height = Math.round(img.height * s); c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      xState.photo = c.toDataURL('image/jpeg', 0.82); URL.revokeObjectURL(url); xPreview();
+    };
+    img.src = url;
+  });
+  $('xform').addEventListener('submit', function (e) {
+    e.preventDefault(); $('xerr').hidden = true; $('xok').hidden = true;
+    var texts = { fr: {}, en: {} };
+    document.querySelectorAll('#xgroups [data-key]').forEach(function (i) { var v = i.value.trim(); if (v && v !== i.dataset.def) { texts[i.dataset.lang][i.dataset.key] = v; } });
+    var body = { texts: texts, phone: $('x-phone').value, whatsapp: $('x-wa').value };
+    if (xState.photo !== undefined) { body.cookPhoto = xState.photo; }
+    api('site', { method: 'POST', body: body }).then(function () { $('xok').hidden = false; loadTexts(); })
+      .catch(function (err) { if (err.message === 'auth') { return; } $('xerr').textContent = { phone: 'Téléphone invalide.', whatsapp: 'Numéro WhatsApp invalide.', photo: 'Photo trop lourde ou invalide.', text: 'Un texte est trop long (600 caractères maximum).' }[err.code] || 'Erreur, réessayez.'; $('xerr').hidden = false; });
+  });
 
   /* ---- settings ---- */
   $('sform').addEventListener('submit', function (e) {

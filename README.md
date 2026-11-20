@@ -14,7 +14,7 @@ npm run dev           # http://localhost:8788
 Opening `index.html` directly (no server) still works: the checkout then falls back to saving orders in `localStorage`.
 
 ## Owner dashboard
-Open `/admin/` (French, phone friendly). Log in with the password set in `ADMIN_PASSWORD` (`.dev.vars` locally, Pages settings in production; without it the dashboard is disabled). It lets the owner add and edit pastries (names FR/EN, descriptions, price, photo, emoji, colour, visible or hidden, position), set the delivery fee, and see and confirm/refuse orders. Changes appear at once in the shop and the game, and order totals always use these prices. Photos are resized in the browser to 800 px and stored in the database (no extra service). Pastries are hidden rather than deleted so old orders keep their names.
+Open `/admin/` (French, phone friendly). Log in with the password set in `ADMIN_PASSWORD` (`.dev.vars` locally, Pages settings in production; without it the dashboard is disabled). It lets the owner add and edit pastries (names FR/EN, descriptions, price, photo, emoji, colour, visible or hidden, position), set the delivery fee, edit every website text in French and English (tab Textes: hero, catalogue, cook section, contact, game, checkout labels), the phone, WhatsApp number and cook photo, and see and confirm/refuse orders. Changes appear at once in the shop and the game, and order totals always use these prices. Photos are resized in the browser to 800 px and stored in the database (no extra service). Pastries are hidden rather than deleted so old orders keep their names.
 
 Optional local notification settings go in `.dev.vars` (never committed): `RESEND_API_KEY`, `OWNER_EMAIL`, `OWNER_WHATSAPP` (digits only, e.g. 221770000000). Without them the order text and the Confirm/Refuse/WhatsApp links are printed in the server log.
 
@@ -24,6 +24,7 @@ One-time setup already done: `npx wrangler d1 create danis` (id in `wrangler.tom
 
 ## Files
 - `functions/api/orders.js` (stores the order, recomputes prices server-side), `functions/api/products.js` + `photo.js` (public catalog), `functions/api/admin/*` (login, products, orders), `admin/index.html` (dashboard), `functions/api/decide.js` (owner Confirm/Refuse link), `functions/_notify.js` (email + WhatsApp link), `migrations/` (D1 schema), `assets/logo.png`.
+- `texts.js` (default FR/EN texts, overridable from /admin), `functions/_site.js` + `functions/api/admin/site.js` (text overrides, phone, WhatsApp, cook photo).
 - `index.html`, `styles.css`: page, both faces, and the cart drawer shared by both.
 - `app.js`: catalog data (`PRODUCTS`), French/English texts (`TEXT`), cart, checkout, face switching.
 - `game.js`: the game. All art is drawn in code (original chef and shapes, nothing copied). It only talks to the shop through `window.Danis`.

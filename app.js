@@ -19,80 +19,7 @@
     { id: 'gateau',    emoji: '🎂', color: '#fcd5e5', price: 15000, fr: "Gâteau d'anniversaire", en: 'Birthday cake', dfr: 'Sur commande, 8 à 10 parts.',             den: 'Made to order, 8 to 10 slices.' }
   ];
 
-  var TEXT = {
-    fr: {
-      face_shop: 'Boutique', face_game: 'Jeu 🎮',
-      hero_eyebrow: 'Pâtisserie artisanale · Sénégal',
-      hero_title: 'Des douceurs faites maison, pour toutes vos occasions.',
-      hero_lead: 'Viennoiseries, gâteaux et tartes préparés chaque jour. Commandez en ligne, ou prenez les commandes en main avec notre mini-jeu.',
-      cta_order: 'Commander', cta_play: 'Commander en jouant 🎮',
-      cat_title: 'Notre catalogue', cat_sub: 'Prix en FCFA. Photos et prix à remplacer par les vôtres.',
-      add: 'Ajouter', ph_photo: 'Photo à venir',
-      cook_title: 'La pâtissière', cook_sub: 'Textes à remplacer par le vrai parcours.',
-      cook_story: "Passionnée de pâtisserie depuis l'enfance, Dani prépare chaque recette avec des ingrédients choisis avec soin et un savoir-faire transmis en famille.",
-      cred_train_t: 'Formation', cred_train_d: 'Diplôme de pâtisserie (établissement et année à indiquer)',
-      cred_exp_t: 'Expérience', cred_exp_d: 'X années en boulangerie-pâtisserie, hôtels et événements',
-      cred_cert_t: 'Certifications', cred_cert_d: 'Hygiène et sécurité alimentaire (à confirmer)',
-      cred_spec_t: 'Spécialités', cred_spec_d: "Gâteaux d'anniversaire, mariages, viennoiseries",
-      ct_title: 'Contact et horaires', ct_addr: 'Adresse de la pâtisserie, Dakar, Sénégal', ct_hours: 'Lundi–samedi 8h–19h, dimanche 8h–13h',
-      game_help: 'Courez et sautez sous les boîtes pour les ouvrir : chaque coup ajoute une pâtisserie à votre commande.',
-      hud_items: 'articles', game_order: 'Voir ma commande', btn_jump: 'SAUT',
-      game_keys: 'Clavier : flèches ou A/D pour bouger, espace pour sauter.', game_back: '← Retour à la boutique',
-      cart_title: 'Ma commande', cart_empty: 'Votre panier est vide.',
-      f_name: 'Nom', f_phone: 'Téléphone (WhatsApp)', f_addr: 'Adresse de livraison', f_date: 'Pour quand ?', f_note: 'Message (facultatif)',
-      mode_pickup: 'Retrait en boutique', mode_delivery: 'Livraison',
-      pay_title: 'Paiement', pay_card: 'Carte bancaire', pay_cash: 'Espèces',
-      hint_online: function (a) { return 'Après validation par la pâtisserie, vous recevez un lien de paiement de ' + a + '.'; },
-      hint_cash: 'Vous payez en espèces au retrait ou à la livraison.',
-      t_sub: 'Sous-total', t_delivery: 'Livraison', t_total: 'Total', free: 'Offert',
-      cta_send: 'Envoyer ma commande',
-      err_empty: 'Votre panier est vide.', err_name: 'Indiquez votre nom.', err_phone: 'Indiquez un numéro de téléphone valide.',
-      err_addr: 'Indiquez l\'adresse de livraison.',
-      done_title: 'Commande envoyée ✔',
-      done_text: function (ref) { return 'Référence ' + ref + '. La pâtisserie confirme votre commande par WhatsApp.'; },
-      done_msg: 'Message reçu par la pâtisserie (aperçu du prototype)', done_close: 'Fermer',
-      foot_proto: 'Prototype',
-      payName: { wave: 'Wave', om: 'Orange Money', card: 'Carte bancaire', cash: 'Espèces' },
-      modeName: { pickup: 'Retrait en boutique', delivery: 'Livraison' },
-      plus1: '+1'
-    },
-    en: {
-      face_shop: 'Shop', face_game: 'Game 🎮',
-      hero_eyebrow: 'Handmade pastry · Senegal',
-      hero_title: 'Homemade treats for every occasion.',
-      hero_lead: 'Pastries, cakes and tarts baked every day. Order online, or take the orders into your own hands with our mini-game.',
-      cta_order: 'Order', cta_play: 'Order by playing 🎮',
-      cat_title: 'Our catalogue', cat_sub: 'Prices in FCFA. Photos and prices to be replaced with yours.',
-      add: 'Add', ph_photo: 'Photo coming soon',
-      cook_title: 'The pastry chef', cook_sub: 'Texts to be replaced with the real background.',
-      cook_story: 'Passionate about pastry since childhood, Dani makes every recipe with carefully chosen ingredients and know-how handed down in the family.',
-      cred_train_t: 'Training', cred_train_d: 'Pastry diploma (school and year to add)',
-      cred_exp_t: 'Experience', cred_exp_d: 'X years in bakery and pastry, hotels and events',
-      cred_cert_t: 'Certifications', cred_cert_d: 'Food hygiene and safety (to be confirmed)',
-      cred_spec_t: 'Specialities', cred_spec_d: 'Birthday cakes, weddings, viennoiseries',
-      ct_title: 'Contact and opening hours', ct_addr: 'Pastry shop address, Dakar, Senegal', ct_hours: 'Monday–Saturday 8am–7pm, Sunday 8am–1pm',
-      game_help: 'Run and jump under the boxes to open them: every hit adds a pastry to your order.',
-      hud_items: 'items', game_order: 'See my order', btn_jump: 'JUMP',
-      game_keys: 'Keyboard: arrow keys or A/D to move, space to jump.', game_back: '← Back to the shop',
-      cart_title: 'My order', cart_empty: 'Your basket is empty.',
-      f_name: 'Name', f_phone: 'Phone (WhatsApp)', f_addr: 'Delivery address', f_date: 'For when?', f_note: 'Message (optional)',
-      mode_pickup: 'Pick up in shop', mode_delivery: 'Delivery',
-      pay_title: 'Payment', pay_card: 'Bank card', pay_cash: 'Cash',
-      hint_online: function (a) { return 'Once the shop approves, you receive a payment link for ' + a + '.'; },
-      hint_cash: 'You pay in cash at pickup or on delivery.',
-      t_sub: 'Subtotal', t_delivery: 'Delivery', t_total: 'Total', free: 'Free',
-      cta_send: 'Send my order',
-      err_empty: 'Your basket is empty.', err_name: 'Enter your name.', err_phone: 'Enter a valid phone number.',
-      err_addr: 'Enter the delivery address.',
-      done_title: 'Order sent ✔',
-      done_text: function (ref) { return 'Reference ' + ref + '. The shop confirms your order by WhatsApp.'; },
-      done_msg: 'Message received by the shop (prototype preview)', done_close: 'Close',
-      foot_proto: 'Prototype',
-      payName: { wave: 'Wave', om: 'Orange Money', card: 'Bank card', cash: 'Cash' },
-      modeName: { pickup: 'Pick up in shop', delivery: 'Delivery' },
-      plus1: '+1'
-    }
-  };
+  var TEXT = window.DANIS_TEXT;
 
   var $ = function (id) { return document.getElementById(id); };
   var lang = 'fr';
@@ -110,8 +37,9 @@
 
   /* ---------- cart ---------- */
   function persist() { try { localStorage.setItem('danis.cart', JSON.stringify(cart)); } catch (e) { /* ignore */ } }
-  function count() { return Object.keys(cart).reduce(function (n, id) { return n + cart[id]; }, 0); }
-  function subtotal() { return Object.keys(cart).reduce(function (s, id) { return s + cart[id] * product(id).price; }, 0); }
+  function known() { return Object.keys(cart).filter(product); }
+  function count() { return known().reduce(function (n, id) { return n + cart[id]; }, 0); }
+  function subtotal() { return known().reduce(function (s, id) { return s + cart[id] * product(id).price; }, 0); }
   function change(id, delta) {
     var q = (cart[id] || 0) + delta;
     if (q <= 0) { delete cart[id]; } else { cart[id] = Math.min(q, 99); }
@@ -120,7 +48,7 @@
 
   function renderCart() {
     $('cart-count').textContent = count();
-    var ids = Object.keys(cart), ul = $('lines');
+    var ids = known(), ul = $('lines');
     ul.innerHTML = '';
     ids.forEach(function (id) {
       var p = product(id), li = document.createElement('li');
@@ -172,7 +100,7 @@
     var order = {
       id: 'DN-' + Date.now().toString(36).toUpperCase().slice(-6), name: name, phone: phone, mode: mode,
       addr: $('addr').value.trim(), when: $('when').value, note: $('note').value.trim(),
-      pay: document.querySelector('input[name="pay"]:checked').value, items: JSON.parse(JSON.stringify(cart)),
+      pay: document.querySelector('input[name="pay"]:checked').value, items: known().reduce(function (o, id) { o[id] = cart[id]; return o; }, {}),
       subtotal: sub, delivery: del, total: sub + del, status: 'pending', created: new Date().toISOString()
     };
 
@@ -264,13 +192,24 @@
     onProducts: function (fn) { productListeners.push(fn); }
   };
 
+  // Owner edits (texts, phone, WhatsApp, cook photo) override the built-in defaults.
+  function applySite(d) {
+    var ov = d.texts || {};
+    ['fr', 'en'].forEach(function (l) { Object.keys(ov[l] || {}).forEach(function (k) { if (typeof TEXT[l][k] === 'string' && ov[l][k]) { TEXT[l][k] = ov[l][k]; } }); });
+    var site = d.site || {};
+    if (site.phone) { var p = $('ct-phone'); p.textContent = site.phone; p.href = 'tel:' + site.phone.replace(/[^\d+]/g, ''); }
+    if (site.whatsapp) { $('ct-wa').href = 'https://wa.me/' + site.whatsapp.replace(/\D/g, ''); }
+    if (site.cookPhoto) { var c = $('cook-photo'); c.innerHTML = ''; var im = document.createElement('img'); im.src = site.cookPhoto; im.alt = ''; c.appendChild(im); }
+  }
+
   // The catalog and delivery fee come from the server (edited in /admin). The built-in list is the offline fallback.
   function loadProducts() {
     fetch('/api/products').then(function (r) { if (!r.ok) { throw new Error('http'); } return r.json(); }).then(function (d) {
       if (!d.products || !d.products.length) { return; }
       PRODUCTS.length = 0; d.products.forEach(function (p) { PRODUCTS.push(p); });
       CONFIG.deliveryFee = d.deliveryFee;
-      dropUnknown(); persist(); renderGrid(); renderCart();
+      applySite(d);
+      dropUnknown(); persist(); applyText();
       productListeners.forEach(function (fn) { fn(); }); listeners.forEach(function (fn) { fn(); });
     }).catch(function () { /* no server: keep built-in catalog */ });
   }
