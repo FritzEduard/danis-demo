@@ -18,8 +18,9 @@ Open `/admin/` (French, phone friendly). Log in with the password set in `ADMIN_
 
 Optional local notification settings go in `.dev.vars` (never committed): `RESEND_API_KEY`, `OWNER_EMAIL`, `OWNER_WHATSAPP` (digits only, e.g. 221770000000). Without them the order text and the Confirm/Refuse/WhatsApp links are printed in the server log.
 
-## Deploy (Cloudflare Pages, not done yet)
-`npx wrangler d1 create danis`, put the id in `wrangler.toml`, `npm run db:remote`, set the same variables in Pages settings, then connect the repo. See `PLAN.md`.
+## Deploy (Cloudflare Pages)
+Live at https://danis-6re.pages.dev (dashboard: /admin/). Redeploy with `npm run deploy` (needs `npx wrangler login`).
+One-time setup already done: `npx wrangler d1 create danis` (id in `wrangler.toml`), `npm run db:remote`, `npx wrangler pages project create danis`, and the secret `npx wrangler pages secret put ADMIN_PASSWORD --project-name danis`. To switch on email alerts set `RESEND_API_KEY`, `OWNER_EMAIL` and `OWNER_WHATSAPP` the same way. See `PLAN.md`.
 
 ## Files
 - `functions/api/orders.js` (stores the order, recomputes prices server-side), `functions/api/products.js` + `photo.js` (public catalog), `functions/api/admin/*` (login, products, orders), `admin/index.html` (dashboard), `functions/api/decide.js` (owner Confirm/Refuse link), `functions/_notify.js` (email + WhatsApp link), `migrations/` (D1 schema), `assets/logo.png`.
