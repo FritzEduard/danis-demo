@@ -1,8 +1,8 @@
 name = "danis"
 compatibility_date = "2026-01-01"
-pages_build_output_dir = "."
+pages_build_output_dir = "dist"
 
 [[d1_databases]]
 binding = "DB"
 database_name = "danis"
-database_id = "REPLACE_AFTER_wrangler_d1_create"
+database_id = "4417a339-960c-4afc-8abe-05a0ebe0cbda"

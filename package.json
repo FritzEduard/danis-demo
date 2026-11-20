@@ -2,7 +2,9 @@
   "name": "danis",
   "private": true,
   "scripts": {
-    "dev": "wrangler pages dev . --port 8788",
+    "build": "node scripts/build.mjs",
+    "dev": "npm run build && wrangler pages dev dist --port 8788",
+    "deploy": "npm run build && wrangler pages deploy dist --project-name danis --branch main",
     "db:local": "wrangler d1 execute danis --local --file=migrations/0001_orders.sql && wrangler d1 execute danis --local --file=migrations/0002_products.sql",
     "db:remote": "wrangler d1 execute danis --remote --file=migrations/0001_orders.sql && wrangler d1 execute danis --remote --file=migrations/0002_products.sql"
   },
